@@ -1,22 +1,45 @@
+# Fix num errors
 from tkinter import *
 
 root = Tk()
+
+NUMBERS = '0123456789'
+
+def get_int(self):
+    current_entry = self.get()
+    new_entry = ''
+    # Remove characters
+    for char in current_entry:
+        if char in NUMBERS:
+            new_entry += char
+    
+    # Convert to integer
+    try:
+        new_entry = int(new_entry)
+    except:
+        new_entry = 0
+    
+    self.set(str(new_entry))
+    return new_entry
+
+StringVar.get_int = get_int
+StringVar.set_int = lambda self, value : self.set(str(value))
 
 info = {
     "Adult": {
         "Price": 15,
         "Total": 0,
-        "Input": IntVar()
+        "Input": StringVar(root, "0")
     },
     "Child": {
         "Price": 5,
         "Total": 0,
-        "Input": IntVar()
+        "Input": StringVar(root, "0")
     },
     "Concession": {
         "Price": 10,
         "Total": 0,
-        "Input": IntVar()
+        "Input": StringVar(root, "0")
     },
 }
 
@@ -36,10 +59,9 @@ Concession: {self.Concession}'''
         return msg
     
     def update_tickets(self) -> None:
-        self.Adults = info["Adult"]["Input"].get()
-        self.Children = info["Child"]["Input"].get()
-        self.Concession = info["Concession"]["Input"].get()
-        print(info["Concession"]["Input"].get())
+        self.Adults = info["Adult"]["Input"].get_int()
+        self.Children = info["Child"]["Input"].get_int()
+        self.Concession = info["Concession"]["Input"].get_int()
     
     def total_price(self) -> int:
         total = 0
@@ -67,11 +89,9 @@ def submit(*args):
     current_order.save_order()
     current_order = Ticket()
     total.set(0)
-    info["Adult"]["Input"].set(0)
-    info["Child"]["Input"].set(0)
-    info["Concession"]["Input"].set(0)
-    print(orders[0])
-    print(orders[1])
+    info["Adult"]["Input"].set_int(0)
+    info["Child"]["Input"].set_int(0)
+    info["Concession"]["Input"].set_int(0)
 
 info["Adult"]["Input"].trace_add('write', update_total)
 info["Child"]["Input"].trace_add('write', update_total)
