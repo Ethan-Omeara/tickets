@@ -54,4 +54,39 @@ Concession: {self.Concession}'''
         info["Child"]["Total"] += self.Children
         info["Concession"]["Total"] += self.Concession
 
+current_order = Ticket()
+total = StringVar(root, "$0")
+
+def update_total(*args):
+    current_order.update_tickets()
+    total.set("$" + str(current_order.total_price()))
+
+def submit(*args):
+    global current_order
+    current_order.update_tickets()
+    current_order.save_order()
+    current_order = Ticket()
+    total.set(0)
+    info["Adult"]["Input"].set(0)
+    info["Child"]["Input"].set(0)
+    info["Concession"]["Input"].set(0)
+    print(orders[0])
+    print(orders[1])
+
+info["Adult"]["Input"].trace_add('write', update_total)
+info["Child"]["Input"].trace_add('write', update_total)
+info["Concession"]["Input"].trace_add('write', update_total)
+
+Label(root, text="Adults").grid(row=0, column=0)
+Label(root, text="Children").grid(row=1, column=0)
+Label(root, text="Concession").grid(row=2, column=0)
+Label(root, text="Total", font=('Arial', 12, "bold")).grid(row=3, column=0)
+
+Entry(root, textvariable=info["Adult"]["Input"]).grid(row=0, column=1)
+Entry(root, textvariable=info["Child"]["Input"]).grid(row=1, column=1)
+Entry(root, textvariable=info["Concession"]["Input"]).grid(row=2, column=1)
+Label(root, textvariable=total).grid(row=3, column=1)
+
+Button(root, text="Submit", command=submit).grid(row=4, column=0, columnspan=2)
+
 root.mainloop()
